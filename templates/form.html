@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ contract_title }}</title>
+    <style>
+        body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .back-btn:hover { text-decoration: underline; }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        fieldset { border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        legend { font-weight: bold; color: #007bff; padding: 0 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #444; }
+        input, textarea { width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button[type="submit"] { background: #28a745; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button[type="submit"]:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Вернуться к выбору вида договора</a>
+        <h2>{{ contract_title }}</h2>
+        
+        <form action="/generate-pdf" method="post">
+            <input type="hidden" name="contract_type" value="{{ contract_type }}">
+
+            <fieldset>
+                <legend>Общие данные</legend>
+                <label>Город:</label>
+                <input type="text" name="city" required placeholder="Москва">
+                <label>Дата подписания:</label>
+                <input type="text" name="date" required placeholder="ДД.ММ.ГГГГ">
+            </fieldset>
+
+            <fieldset>
+                <legend>Реквизиты Заказчика</legend>
+                <label>Наименование (ФИО / Компания):</label>
+                <input type="text" name="customer_name" required>
+                <label>ИНН:</label>
+                <input type="text" name="customer_inn" required>
+            </fieldset>
+
+            <fieldset>
+                <legend>Реквизиты Исполнителя / Подрядчика</legend>
+                <label>ФИО / Наименование:</label>
+                <input type="text" name="contractor_name" required>
+                <label>ИНН:</label>
+                <input type="text" name="contractor_inn" required>
+            </fieldset>
+
+            <fieldset>
+                <legend>Условия договора</legend>
+                <label>{% if contract_type == 'services' %}Вид услуг / Предмет:{% else %}Описание работ / ТЗ:{% endif %}</label>
+                <input type="text" name="subject" required>
+                <label>Срок выполнения:</label>
+                <input type="text" name="deadline" required placeholder="Например: 10 рабочих дней">
+                <label>Стоимость (руб.):</label>
+                <input type="text" name="price" required placeholder="Сумма цифрами">
+                <label>Дополнительные условия:</label>
+                <textarea name="extra_terms" rows="2"></textarea>
+            </fieldset>
+
+            <button type="submit">Сгенерировать PDF</button>
+        </form>
+    </div>
+</body>
+</html>
