@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Генератор договоров</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+            min-height: 100vh;
+            margin: 0; 
+            padding: 40px 20px; 
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 0 auto; 
+            background: #ffffff; 
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; }
+        h3 { color: #5d63f0; border-bottom: 2px solid #5d63f0; padding-bottom: 10px; margin-top: 30px; }
+        
+        .section { margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: 600; color: #444; }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 6px; 
+            border: 1px solid #dcdcdc; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus { border-color: #5d63f0; outline: none; }
+        
+        .input-error {
+            border: 2px solid #ff4d4d !important;
+        }
+        .error-message {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .btn-generate { 
+            display: block; 
+            width: 100%; 
+            padding: 20px; 
+            margin-top: 40px; 
+            background-color: #5d63f0; 
+            color: white; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 10px; 
+            transition: transform 0.2s, background 0.3s; 
+        }
+        .btn-generate:hover { background-color: #4a4edf; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Создание договора</h1>
+        
+        <div class="section">
+            <h3>Общие данные</h3>
+            <label>Город:</label> <input type="text" id="city" placeholder="Например: Москва">
+            <label>Дата подписания: <span style="color: #ff4d4d;">*</span></label> 
+            <input type="date" id="signing_date" required>
+        </div>
+
+        <div class="section">
+            <h3>Реквизиты Заказчика</h3>
+            <label>Наименование (организация или ИП):</label> 
+            <input type="text" id="client_name" list="history_clients" placeholder="Начните вводить или выберите из прошлых...">
+            <datalist id="history_clients"></datalist>
+
+            <label>ИНН:</label> <input type="text" id="client_inn" placeholder="Введите ИНН">
+            <label>КПП (если есть):</label> <input type="text" id="client_kpp" placeholder="Введите КПП">
+            <label>Банк:</label> <input type="text" id="client_bank" placeholder="Наименование банка">
+            <label>Расчетный счет:</label> <input type="text" id="client_account" placeholder="20 цифр счета">
+        </div>
+
+        <div class="section">
+            <h3>Реквизиты Исполнителя</h3>
+            <label>Тип:</label>
+            <select id="executor_type" onchange="toggleExecutorFields()">
+                <option value="ИП">ИП</option>
+                <option value="Самозанятый">Самозанятый</option>
+                <option value="Юрлицо">Юридическое лицо (ООО, АО, ПАО, НКО и др.)</option>
+                <option value="Физлицо">Физическое лицо</option>
+            </select>
+            
+            <label id="name_label">ФИО / Наименование:</label> 
+            <input type="text" id="executor_name" placeholder="Введите имя или название...">
+            
+            <div id="dynamic_fields"></div>
+
+            <label>ИНН:</label> <input type="text" id="executor_inn" placeholder="Введите ИНН">
+            <label>Банк:</label> <input type="text" id="executor_bank" placeholder="Наименование банка">
+            <label>Расчетный счет:</label> <input type="text" id="executor_account" placeholder="20 цифр счета">
+        </div>
+
+        <div class="section">
+            <h3>Условия договора</h3>
+            <label>Вид услуг:</label> <input type="text" id="service_type" placeholder="Опишите предмет услуг">
+            <label>Срок выполнения:</label> <input type="text" id="deadline" placeholder="Например: 10 рабочих дней">
+            <label>Стоимость (руб.):</label> <input type="number" id="price" placeholder="Сумма цифрами">
+            
+            <label>Дополнительные условия:</label> 
+            <input type="text" id="additional_terms" list="history_terms" placeholder="Введите условие или выберите из истории...">
+            <datalist id="history_terms"></datalist>
+            
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <label>Пени Заказчику (%):</label>
+                    <input type="number" id="client_penalty" step="0.1" placeholder="0.1">
+                </div>
+                <div style="flex: 1;">
+                    <label>Пени Исполнителю (%):</label>
+                    <input type="number" id="executor_penalty" step="0.1" placeholder="0.1">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-generate" onclick="generatePDF()">ПРЕДПРОСМОТР ДОГОВОРА</button>
+    </div>
+
+    <script>
+        function loadHistory(key, datalistId) {
+            const saved = JSON.parse(localStorage.getItem(key) || '[]');
+            const datalist = document.getElementById(datalistId);
+            datalist.innerHTML = '';
+            saved.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                datalist.appendChild(option);
+            });
+        }
+
+        function saveToHistory(key, value) {
+            if (!value) return;
+            let saved = JSON.parse(localStorage.getItem(key) || '[]');
+            if (!saved.includes(value)) {
+                saved.push(value);
+                localStorage.setItem(key, JSON.stringify(saved));
+            }
+        }
+
+        loadHistory('saved_clients', 'history_clients');
+        loadHistory('saved_terms', 'history_terms');
+
+        function toggleExecutorFields() {
+            const type = document.getElementById('executor_type').value;
+            const container = document.getElementById('dynamic_fields');
+            const nameLabel = document.getElementById('name_label');
+            
+            container.innerHTML = '';
+            
+            if (type === 'Юрлицо') {
+                nameLabel.innerText = 'Наименование (напр. АО "Рога и копыта"):';
+                container.innerHTML = '<label>КПП:</label><input type="text" id="executor_kpp" placeholder="Введите КПП">';
+            } else if (type === 'Физлицо') {
+                nameLabel.innerText = 'ФИО гражданина:';
+                container.innerHTML = '<label>Паспортные данные (серия, номер, кем и когда выдан):</label><input type="text" id="executor_passport" placeholder="Паспортные данные">';
+            } else {
+                nameLabel.innerText = 'ФИО / Наименование:';
+            }
+        }
+
+        // Валидация расчетного счета
+        function validateAccount(input) {
+            const val = input.value.replace(/\s+/g, '');
+            const errorId = input.id + '_error';
+            let errorSpan = document.getElementById(errorId);
+
+            if (!errorSpan) {
+                errorSpan = document.createElement('div');
+                errorSpan.id = errorId;
+                errorSpan.className = 'error-message';
+                input.parentNode.insertBefore(errorSpan, input.nextSibling);
+            }
+
+            if (val.length !== 20 && val.length > 0) {
+                input.classList.add('input-error');
+                errorSpan.style.display = 'block';
+                errorSpan.innerText = `Число цифр должно быть 20, а вы указали: ${val.length}`;
+                return false;
+            } else {
+                input.classList.remove('input-error');
+                errorSpan.style.display = 'none';
+                return true;
+            }
+        }
+
+        ['client_account', 'executor_account'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('blur', () => validateAccount(el));
+            }
+        });
+
+        async function generatePDF() {
+            // Проверка обязательного заполнения даты
+            const signingDateInput = document.getElementById('signing_date');
+            if (!signingDateInput.value) {
+                signingDateInput.classList.add('input-error');
+                alert("Пожалуйста, укажите дату подписания договора!");
+                signingDateInput.focus();
+                return;
+            } else {
+                signingDateInput.classList.remove('input-error');
+            }
+
+            const clientAcc = document.getElementById('client_account');
+            const execAcc = document.getElementById('executor_account');
+            
+            const isClientAccValid = validateAccount(clientAcc);
+            const isExecAccValid = validateAccount(execAcc);
+
+            if (!isClientAccValid || !isExecAccValid) {
+                alert("Пожалуйста, исправьте ошибки в расчетных счетах (должно быть ровно 20 цифр).");
+                return;
+            }
+
+            saveToHistory('saved_clients', document.getElementById('client_name').value);
+            saveToHistory('saved_terms', document.getElementById('additional_terms').value);
+
+            const type = document.getElementById('executor_type').value;
+            const data = {
+                city: document.getElementById('city').value,
+                signing_date: signingDateInput.value,
+                client_name: document.getElementById('client_name').value,
+                client_inn: document.getElementById('client_inn').value,
+                client_kpp: document.getElementById('client_kpp').value,
+                client_bank: document.getElementById('client_bank').value,
+                client_account: document.getElementById('client_account').value,
+                executor_type: type,
+                executor_name: document.getElementById('executor_name').value,
+                executor_inn: document.getElementById('executor_inn').value,
+                executor_bank: document.getElementById('executor_bank').value,
+                executor_account: document.getElementById('executor_account').value,
+                executor_kpp: type === 'Юрлицо' ? (document.getElementById('executor_kpp') ? document.getElementById('executor_kpp').value : '') : '',
+                executor_passport: type === 'Физлицо' ? (document.getElementById('executor_passport') ? document.getElementById('executor_passport').value : '') : '',
+                service_type: document.getElementById('service_type').value,
+                deadline: document.getElementById('deadline').value,
+                price: parseInt(document.getElementById('price').value) || 0,
+                additional_terms: document.getElementById('additional_terms').value,
+                client_penalty: parseFloat(document.getElementById('client_penalty').value) || 0,
+                executor_penalty: parseFloat(document.getElementById('executor_penalty').value) || 0
+            };
+
+            const response = await fetch('/generate-pdf-contract', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const fileURL = URL.createObjectURL(blob);
+                window.open(fileURL, '_blank');
+            } else {
+                alert("Ошибка при генерации договора!");
+            }
+        }
+    </script>
+</body>
+</html>
