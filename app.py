@@ -10,18 +10,16 @@ import os
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Регистрация шрифта с поддержкой русского языка
+# Безопасная регистрация шрифта
 if os.path.exists('arial.ttf'):
     pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    """Главная страница со списком доступных договоров"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/form/{contract_type}", response_class=HTMLResponse)
 def contract_form(request: Request, contract_type: str):
-    """Страница с формой для конкретного договора"""
     titles = {
         "services": "Договор оказания услуг",
         "construction": "Договор строительного подряда"
@@ -38,18 +36,10 @@ def generate_pdf(
     contract_type: str = Form(...),
     city: str = Form(...),
     date: str = Form(...),
-    # Реквизиты Заказчика
     customer_name: str = Form(...),
     customer_inn: str = Form(...),
-    customer_kpp: str = Form(""),
-    customer_bank: str = Form(""),
-    customer_account: str = Form(""),
-    # Реквизиты Исполнителя / Подрядчика
     contractor_name: str = Form(...),
     contractor_inn: str = Form(...),
-    contractor_bank: str = Form(""),
-    contractor_account: str = Form(""),
-    # Условия
     subject: str = Form(...),
     deadline: str = Form(...),
     price: str = Form(...),
@@ -61,12 +51,10 @@ def generate_pdf(
     c = canvas.Canvas(filename, pagesize=letter)
     width, height = letter
     
-    # Выбираем шрифт (если arial нет, используем стандартный Helvetica)
     font_name = 'Arial' if 'Arial' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
     c.setFont(font_name, 11)
     
     y = height - 40
-    
     title = "ДОГОВОР ОКАЗАНИЯ УСЛУГ" if contract_type == "services" else "ДОГОВОР СТРОИТЕЛЬНОГО ПОДРЯДА"
     
     c.drawString(50, y, f"{title} № 1")
@@ -80,9 +68,9 @@ def generate_pdf(
     c.drawString(50, y, f"{contractor_label}: {contractor_name}, ИНН: {contractor_inn}")
     y -= 30
     
-    c.drawString(50, y, f"1. Предмет договора: {subject}")
+    c.drawString(50, y, f"1. Предмет: {subject}")
     y -= 20
-    c.drawString(50, y, f"2. Срок выполнения: {deadline}")
+    c.drawString(50, y, f"2. Срок: {deadline}")
     y -= 20
     c.drawString(50, y, f"3. Стоимость: {price} руб.")
     y -= 25
