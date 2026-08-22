@@ -5,12 +5,13 @@
     <title>Договор дарения</title>
     <style>
         body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 650px; }
         h1 { color: #333; margin-bottom: 20px; font-size: 22px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
         input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #218838; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
     </style>
 </head>
@@ -20,16 +21,22 @@
         <h1>Договор дарения</h1>
         <form action="/generate-pdf" method="post">
             <input type="hidden" name="contract_type" value="gift">
-            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" required></div>
-            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" required></div>
-            <div class="form-group"><label>Даритель (Кто отдает имущество):</label><input type="text" name="party1_name" required></div>
-            <div class="form-group"><label>Паспорт Дарителя:</label><input type="text" name="party1_id"></div>
-            <div class="form-group"><label>Одаряемый (Кто принимает в подарок):</label><input type="text" name="party2_name" required></div>
-            <div class="form-group"><label>Паспорт Одаряемого:</label><input type="text" name="party2_id"></div>
-            <div class="form-group"><label>Описание передаваемого в дар имущества:</label><input type="text" name="specific_field_1" required></div>
-            <div class="form-group"><label>Условия передачи:</label><textarea name="specific_field_2" rows="2"></textarea></div>
-            <div class="form-group"><label>Оценочная стоимость (руб. / безвозмездно):</label><input type="text" name="price" value="0" required></div>
-            <div class="form-group"><label>Срок передачи:</label><input type="text" name="deadline" required></div>
+            
+            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" placeholder="Москва" required></div>
+            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" placeholder="22 августа 2026" required></div>
+            
+            <div class="form-group"><label>Даритель (ФИО):</label><input type="text" name="party1_name" placeholder="Иванов Иван Иванович" required></div>
+            <div class="form-group"><label>Паспортные данные и адрес Дарителя:</label><input type="text" name="party1_id" placeholder="Серия, номер, кем выдан, адрес регистрации" required></div>
+
+            <div class="form-group"><label>Одаряемый (ФИО):</label><input type="text" name="party2_name" placeholder="Петров Петр Петрович" required></div>
+            <div class="form-group"><label>Паспортные данные и адрес Одаряемого:</label><input type="text" name="party2_id" placeholder="Серия, номер, кем выдан, адрес регистрации" required></div>
+
+            <div class="form-group"><label>Описание передаваемого в дар имущества:</label><input type="text" name="specific_field_1" placeholder="Ноутбук Apple MacBook Pro, серийный номер..." required></div>
+            <div class="form-group"><label>Условия передачи и подтверждение безвозмездности:</label><textarea name="specific_field_2" rows="2" placeholder="Даритель передает имущество безвозмездно, встречная передача вещей или денег не предусмотрена..."></textarea></div>
+            
+            <div class="form-group"><label>Оценочная стоимость (руб.):</label><input type="text" name="price" placeholder="100000" required></div>
+            <div class="form-group"><label>Срок передачи имущества:</label><input type="text" name="deadline" placeholder="В день подписания настоящего договора" required></div>
+            
             <button type="submit" class="btn-submit">Скачать PDF</button>
         </form>
     </div>
