@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Договор аренды</title>
+    <title>Договор аренды помещения</title>
     <style>
         body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 650px; }
         h1 { color: #333; margin-bottom: 20px; font-size: 22px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
@@ -13,68 +13,34 @@
         .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .btn-submit:hover { background: #218838; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
-        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="/" class="back-link">← Назад к выбору договоров</a>
         <h1>Договор аренды помещения</h1>
-        
         <form action="/generate-pdf" method="post">
             <input type="hidden" name="contract_type" value="rent">
+            
+            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" placeholder="Москва" required></div>
+            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" placeholder="22 августа 2026" required></div>
+            
+            <div class="form-group"><label>Арендодатель (ФИО / Название компании):</label><input type="text" name="party1_name" placeholder="Иванов Иван Иванович" required></div>
+            <div class="form-group"><label>Паспорт / ИНН и Адрес Арендодателя:</label><input type="text" name="party1_id" placeholder="Паспортные данные, адрес регистрации" required></div>
 
-            <div class="form-group">
-                <label>Город заключения:</label>
-                <input type="text" name="city" required placeholder="например, Москва">
-            </div>
+            <div class="form-group"><label>Арендатор (ФИО / Название компании):</label><input type="text" name="party2_name" placeholder="Петров Петр Петрович" required></div>
+            <div class="form-group"><label>Паспорт / ИНН и Адрес Арендатора:</label><input type="text" name="party2_id" placeholder="Паспортные данные, адрес регистрации" required></div>
 
-            <div class="form-group">
-                <label>Дата заключения:</label>
-                <input type="text" name="date" required placeholder="например, 22 августа 2026">
-            </div>
-
-            <div class="form-group">
-                <label>Арендодатель (ФИО / Название компании):</label>
-                <input type="text" name="party1_name" required placeholder="Кто сдает помещение">
-            </div>
-
-            <div class="form-group">
-                <label>Паспорт / ИНН Арендодателя:</label>
-                <input type="text" name="party1_id" placeholder="Реквизиты">
-            </div>
-
-            <div class="form-group">
-                <label>Арендатор (ФИО / Название компании):</label>
-                <input type="text" name="party2_name" required placeholder="Кто снимает помещение">
-            </div>
-
-            <div class="form-group">
-                <label>Паспорт / ИНН Арендатора:</label>
-                <input type="text" name="party2_id" placeholder="Реквизиты">
-            </div>
-
-            <div class="form-group">
-                <label>Адрес и характеристики объекта:</label>
-                <input type="text" name="specific_field_1" required placeholder="Точный адрес, площадь, этаж">
-            </div>
-
-            <div class="form-group">
-                <label>Особые условия (имущество, залог):</label>
-                <textarea name="specific_field_2" rows="2" placeholder="Наличие мебели, залоговый платеж..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Ежемесячная арендная плата (руб.):</label>
-                <input type="text" name="price" required placeholder="50000">
-            </div>
-
-            <div class="form-group">
-                <label>Срок аренды:</label>
-                <input type="text" name="deadline" required placeholder="например, 11 месяцев">
-            </div>
-
-            <button type="submit" class="btn-submit">Скачать договор аренды (PDF)</button>
+            <div class="form-group"><label>Точный адрес и характеристики объекта:</label><input type="text" name="specific_field_1" placeholder="г. Москва, ул. Арбат, д. 1, кв. 10, 45 кв.м" required></div>
+            <div class="form-group"><label>Оплата коммунальных услуг и счетчиков:</label><input type="text" name="specific_field_3" placeholder="Арендатор оплачивает свет и воду по счетчикам отдельно" required></div>
+            <div class="form-group"><label>Условия залогового платежа (депозита):</label><textarea name="specific_field_2" rows="2" placeholder="Залог в размере 1 месяца арендной платы возвращается при выезде..."></textarea></div>
+            
+            <div class="form-group"><label>Ежемесячная арендная плата (руб.):</label><input type="text" name="price" placeholder="50000" required></div>
+            <div class="form-group"><label>Сроки и порядок внесения оплаты:</label><input type="text" name="specific_field_4" placeholder="Ежемесячно, не позднее 5-го числа текущего месяца" required></div>
+            
+            <div class="form-group"><label>Срок аренды:</label><input type="text" name="deadline" placeholder="на 11 месяцев" required></div>
+            
+            <button type="submit" class="btn-submit">Скачать PDF</button>
         </form>
     </div>
 </body>
