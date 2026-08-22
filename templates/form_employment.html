@@ -13,68 +13,35 @@
         .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .btn-submit:hover { background: #218838; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
-        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="/" class="back-link">← Назад к выбору договоров</a>
         <h1>Трудовой договор</h1>
-        
         <form action="/generate-pdf" method="post">
             <input type="hidden" name="contract_type" value="employment">
+            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" placeholder="Москва" required></div>
+            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" placeholder="22 августа 2026" required></div>
+            
+            <div class="form-group"><label>Работодатель (Название компании / ИП):</label><input type="text" name="party1_name" placeholder="ООО «Ромашка»" required></div>
+            <div class="form-group"><label>ИНН / ОГРН и Юридический адрес Работодателя:</label><input type="text" name="party1_id" placeholder="ИНН, адрес..." required></div>
+            <div class="form-group"><label>В лице кого действует работодатель (Устав, доверенность):</label><input type="text" name="specific_field_3" placeholder="Генерального директора Иванова И.И., действующего на основании Устава"></div>
 
-            <div class="form-group">
-                <label>Город заключения:</label>
-                <input type="text" name="city" required placeholder="например, Москва">
-            </div>
+            <div class="form-group"><label>Работник (ФИО полностью):</label><input type="text" name="party2_name" placeholder="Иванов Иван Иванович" required></div>
+            <div class="form-group"><label>Паспортные данные Работника:</label><input type="text" name="party2_id" placeholder="Серия, номер, кем и когда выдан" required></div>
+            <div class="form-group"><label>Адрес регистрации (прописки) и ИНН Работника:</label><input type="text" name="specific_field_4" placeholder="Адрес, ИНН" required></div>
+            <div class="form-group"><label>СНИЛС Работника:</label><input type="text" name="specific_field_5" placeholder="000-000-000 00"></div>
 
-            <div class="form-group">
-                <label>Дата заключения:</label>
-                <input type="text" name="date" required placeholder="например, 22 августа 2026">
-            </div>
-
-            <div class="form-group">
-                <label>Работодатель (Название компании / ИП):</label>
-                <input type="text" name="party1_name" required placeholder="ООО «Ромашка»">
-            </div>
-
-            <div class="form-group">
-                <label>ИНН / ОГРН Работодателя:</label>
-                <input type="text" name="party1_id" placeholder="Реквизиты компании">
-            </div>
-
-            <div class="form-group">
-                <label>Работник (ФИО полностью):</label>
-                <input type="text" name="party2_name" required placeholder="Иванов Иван Иванович">
-            </div>
-
-            <div class="form-group">
-                <label>Паспортные данные Работника:</label>
-                <input type="text" name="party2_id" required placeholder="Серия, номер, кем и когда выдан">
-            </div>
-
-            <div class="form-group">
-                <label>Должность и трудовые обязанности:</label>
-                <input type="text" name="specific_field_1" required placeholder="например, Менеджер по продажам">
-            </div>
-
-            <div class="form-group">
-                <label>График работы и условия труда:</label>
-                <textarea name="specific_field_2" rows="2" placeholder="5/2, с 9:00 до 18:00, удаленная работа..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Заработная плата в месяц (руб.):</label>
-                <input type="text" name="price" required placeholder="75000">
-            </div>
-
-            <div class="form-group">
-                <label>Дата начала работы / Срок:</label>
-                <input type="text" name="deadline" required placeholder="с 1 сентября 2026 года (бессрочный)">
-            </div>
-
-            <button type="submit" class="btn-submit">Скачать трудовой договор (PDF)</button>
+            <div class="form-group"><label>Должность и трудовые обязанности:</label><input type="text" name="specific_field_1" placeholder="Менеджер по продажам" required></div>
+            <div class="form-group"><label>График работы и условия труда:</label><textarea name="specific_field_2" rows="2" placeholder="5/2, с 9:00 до 18:00..."></textarea></div>
+            
+            <div class="form-group"><label>Заработная плата (оклад в руб.):</label><input type="text" name="price" placeholder="75000" required></div>
+            <div class="form-group"><label>Даты выплаты зарплаты (например, 15 и 30 числа):</label><input type="text" name="specific_field_6" placeholder="15-го и 30-го числа каждого месяца" required></div>
+            
+            <div class="form-group"><label>Дата начала работы / Срок:</label><input type="text" name="deadline" placeholder="с 1 сентября 2026 года (бессрочный)" required></div>
+            
+            <button type="submit" class="btn-submit">Скачать PDF</button>
         </form>
     </div>
 </body>
