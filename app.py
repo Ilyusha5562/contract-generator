@@ -24,7 +24,11 @@ def contract_form(request: Request, contract_type: str):
         "construction": "Договор строительного подряда",
         "sale": "Договор купли-продажи",
         "rent": "Договор аренды помещения",
-        "loan": "Договор займа"
+        "loan": "Договор займа",
+        "employment": "Трудовой договор",
+        "supply": "Договор поставки",
+        "storage": "Договор хранения",
+        "license": "Лицензионный договор"
     }
     return templates.TemplateResponse(request, "form.html", {
         "request": request,
@@ -57,9 +61,13 @@ def generate_pdf(
     titles = {
         "services": "ДОГОВОР УСЛУГ", 
         "construction": "ДОГОВОР ПОДРЯДА", 
-        "sale": "ДОГОВОР КУПЛИ-ПРОДАЖИ",
+        "sale": "ДОГОВОР КУПЛИ-продажи",
         "rent": "ДОГОВОР АРЕНДЫ",
-        "loan": "ДОГОВОР ЗАЙМА"
+        "loan": "ДОГОВОР ЗАЙМА",
+        "employment": "ТРУДОВОЙ ДОГОВОР",
+        "supply": "ДОГОВОР ПОСТАВКИ",
+        "storage": "ДОГОВОР ХРАНЕНИЯ",
+        "license": "ЛИЦЕНЗИОННЫЙ ДОГОВОР"
     }
     c.drawString(50, y, titles.get(contract_type, "ДОГОВОР"))
     
@@ -67,8 +75,12 @@ def generate_pdf(
     c.drawString(50, y, f"г. {city}, {date}")
     y -= 40
     
-    # Логика подписей сторон
-    if contract_type == "loan":
+    # Гибкая настройка сторон в зависимости от типа
+    if contract_type == "employment":
+        c.drawString(50, y, f"Работодатель: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Работник: {customer_name}")
+    elif contract_type == "loan":
         c.drawString(50, y, f"Займодавец: {contractor_name}")
         y -= 20
         c.drawString(50, y, f"Заемщик: {customer_name}")
@@ -76,17 +88,29 @@ def generate_pdf(
         c.drawString(50, y, f"Арендодатель: {contractor_name}")
         y -= 20
         c.drawString(50, y, f"Арендатор: {customer_name}")
+    elif contract_type == "supply":
+        c.drawString(50, y, f"Поставщик: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Покупатель: {customer_name}")
+    elif contract_type == "storage":
+        c.drawString(50, y, f"Хранитель: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Поклажедатель: {customer_name}")
+    elif contract_type == "license":
+        c.drawString(50, y, f"Лицензиар: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Лицензиат: {customer_name}")
     else:
         c.drawString(50, y, f"Сторона 1: {contractor_name}")
         y -= 20
         c.drawString(50, y, f"Сторона 2: {customer_name}")
         
     y -= 30
-    c.drawString(50, y, f"1. Предмет: {subject}")
+    c.drawString(50, y, f"1. Предмет / Обязанности: {subject}")
     y -= 20
-    c.drawString(50, y, f"2. Сумма займа/оплаты: {price} руб.")
+    c.drawString(50, y, f"2. Сумма / Вознаграждение: {price} руб.")
     y -= 20
-    c.drawString(50, y, f"3. Срок возврата/исполнения: {deadline}")
+    c.drawString(50, y, f"3. Срок / Период действия: {deadline}")
     
     c.save()
     return FileResponse(filename, media_type='application/pdf', filename=filename)
