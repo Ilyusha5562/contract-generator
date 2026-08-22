@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Трудовой договор</title>
+    <style>
+        body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        h1 { color: #333; margin-bottom: 20px; font-size: 22px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #218838; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Назад к выбору договоров</a>
+        <h1>Трудовой договор</h1>
+        
+        <form action="/generate-pdf" method="post">
+            <input type="hidden" name="contract_type" value="employment">
+
+            <div class="form-group">
+                <label>Город заключения:</label>
+                <input type="text" name="city" required placeholder="например, Москва">
+            </div>
+
+            <div class="form-group">
+                <label>Дата заключения:</label>
+                <input type="text" name="date" required placeholder="например, 22 августа 2026">
+            </div>
+
+            <div class="form-group">
+                <label>Работодатель (Название компании / ИП):</label>
+                <input type="text" name="party1_name" required placeholder="ООО «Ромашка»">
+            </div>
+
+            <div class="form-group">
+                <label>ИНН / ОГРН Работодателя:</label>
+                <input type="text" name="party1_id" placeholder="Реквизиты компании">
+            </div>
+
+            <div class="form-group">
+                <label>Работник (ФИО полностью):</label>
+                <input type="text" name="party2_name" required placeholder="Иванов Иван Иванович">
+            </div>
+
+            <div class="form-group">
+                <label>Паспортные данные Работника:</label>
+                <input type="text" name="party2_id" required placeholder="Серия, номер, кем и когда выдан">
+            </div>
+
+            <div class="form-group">
+                <label>Должность и трудовые обязанности:</label>
+                <input type="text" name="specific_field_1" required placeholder="например, Менеджер по продажам">
+            </div>
+
+            <div class="form-group">
+                <label>График работы и условия труда:</label>
+                <textarea name="specific_field_2" rows="2" placeholder="5/2, с 9:00 до 18:00, удаленная работа..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Заработная плата в месяц (руб.):</label>
+                <input type="text" name="price" required placeholder="75000">
+            </div>
+
+            <div class="form-group">
+                <label>Дата начала работы / Срок:</label>
+                <input type="text" name="deadline" required placeholder="с 1 сентября 2026 года (бессрочный)">
+            </div>
+
+            <button type="submit" class="btn-submit">Скачать трудовой договор (PDF)</button>
+        </form>
+    </div>
+</body>
+</html>
