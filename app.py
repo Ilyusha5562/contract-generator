@@ -22,7 +22,8 @@ def contract_form(request: Request, contract_type: str):
     titles = {
         "services": "Договор оказания услуг",
         "construction": "Договор строительного подряда",
-        "sale": "Договор купли-продажи"
+        "sale": "Договор купли-продажи",
+        "rent": "Договор аренды помещения"
     }
     return templates.TemplateResponse(request, "form.html", {
         "contract_type": contract_type,
@@ -51,24 +52,33 @@ def generate_pdf(
     c.setFont(font_name, 11)
     
     y = 750
-    titles = {"services": "ДОГОВОР УСЛУГ", "construction": "ДОГОВОР ПОДРЯДА", "sale": "ДОГОВОР КУПЛИ-ПРОДАЖИ"}
+    titles = {
+        "services": "ДОГОВОР УСЛУГ", 
+        "construction": "ДОГОВОР ПОДРЯДА", 
+        "sale": "ДОГОВОР КУПЛИ-ПРОДАЖИ",
+        "rent": "ДОГОВОР АРЕНДЫ"
+    }
     c.drawString(50, y, titles.get(contract_type, "ДОГОВОР"))
     
     y -= 30
     c.drawString(50, y, f"г. {city}, {date}")
     y -= 40
-    c.drawString(50, y, f"Продавец/Исполнитель: {contractor_name}")
-    y -= 20
-    c.drawString(50, y, f"Покупатель/Заказчик: {customer_name}")
-    y -= 30
     
-    # Предмет в зависимости от типа
-    label = "Предмет сделки" if contract_type == "sale" else "Предмет договора"
-    c.drawString(50, y, f"1. {label}: {subject}")
+    if contract_type == "rent":
+        c.drawString(50, y, f"Арендодатель: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Арендатор: {customer_name}")
+    else:
+        c.drawString(50, y, f"Сторона 1: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Сторона 2: {customer_name}")
+        
+    y -= 30
+    c.drawString(50, y, f"1. Объект/Предмет: {subject}")
     y -= 20
-    c.drawString(50, y, f"2. Цена: {price} руб.")
+    c.drawString(50, y, f"2. Стоимость аренды/оплаты: {price} руб.")
     y -= 20
-    c.drawString(50, y, f"3. Срок: {deadline}")
+    c.drawString(50, y, f"3. Срок аренды: {deadline}")
     
     c.save()
     return FileResponse(filename, media_type='application/pdf', filename=filename)
