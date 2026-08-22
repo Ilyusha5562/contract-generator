@@ -5,7 +5,7 @@
     <title>Договор займа</title>
     <style>
         body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 650px; }
         h1 { color: #333; margin-bottom: 20px; font-size: 22px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
@@ -13,68 +13,33 @@
         .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .btn-submit:hover { background: #218838; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
-        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="/" class="back-link">← Назад к выбору договоров</a>
         <h1>Договор займа</h1>
-        
         <form action="/generate-pdf" method="post">
             <input type="hidden" name="contract_type" value="loan">
+            
+            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" placeholder="Казань" required></div>
+            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" placeholder="22 августа 2026" required></div>
+            
+            <div class="form-group"><label>Займодавец (ФИО / Название компании):</label><input type="text" name="party1_name" placeholder="Иванов Иван Иванович" required></div>
+            <div class="form-group"><label>Паспортные данные / ИНН и Адрес Займодавца:</label><input type="text" name="party1_id" placeholder="Паспортные данные, адрес регистрации" required></div>
 
-            <div class="form-group">
-                <label>Город заключения:</label>
-                <input type="text" name="city" required placeholder="например, Казань">
-            </div>
+            <div class="form-group"><label>Заемщик (ФИО / Название компании):</label><input type="text" name="party2_name" placeholder="Петров Петр Петрович" required></div>
+            <div class="form-group"><label>Паспортные данные / ИНН и Адрес Заемщика:</label><input type="text" name="party2_id" placeholder="Паспортные данные, адрес регистрации" required></div>
 
-            <div class="form-group">
-                <label>Дата заключения:</label>
-                <input type="text" name="date" required placeholder="например, 22 августа 2026">
-            </div>
-
-            <div class="form-group">
-                <label>Займодавец (Кто дает деньги):</label>
-                <input type="text" name="party1_name" required placeholder="ФИО или название компании">
-            </div>
-
-            <div class="form-group">
-                <label>Паспортные данные / ИНН Займодавца:</label>
-                <input type="text" name="party1_id" placeholder="Реквизиты">
-            </div>
-
-            <div class="form-group">
-                <label>Заемщик (Кто берет в долг):</label>
-                <input type="text" name="party2_name" required placeholder="ФИО или название компании">
-            </div>
-
-            <div class="form-group">
-                <label>Паспортные данные / ИНН Заемщика:</label>
-                <input type="text" name="party2_id" required placeholder="Реквизиты">
-            </div>
-
-            <div class="form-group">
-                <label>Цель займа и условия передачи:</label>
-                <input type="text" name="specific_field_1" required placeholder="Наличными / безналичными, на личные нужды">
-            </div>
-
-            <div class="form-group">
-                <label>Порядок возврата и проценты:</label>
-                <textarea name="specific_field_2" rows="2" placeholder="Без процентов или с начислением процента..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Сумма займа (руб.):</label>
-                <input type="text" name="price" required placeholder="100000">
-            </div>
-
-            <div class="form-group">
-                <label>Срок возврата долга:</label>
-                <input type="text" name="deadline" required placeholder="до 31 декабря 2026 года">
-            </div>
-
-            <button type="submit" class="btn-submit">Скачать договор займа (PDF)</button>
+            <div class="form-group"><label>Сумма займа (руб.):</label><input type="text" name="price" placeholder="100000" required></div>
+            <div class="form-group"><label>Порядок и подтверждение передачи денег:</label><input type="text" name="specific_field_1" placeholder="Переданы наличными в момент подписания договора" required></div>
+            <div class="form-group"><label>Проценты по займу (или беспроцентный):</label><input type="text" name="specific_field_2" placeholder="Заем является беспроцентным / 0.1% в день" required></div>
+            
+            <div class="form-group"><label>Ответственность и штрафы за просрочку:</label><input type="text" name="specific_field_3" placeholder="Пеня в размере 0.1% от суммы долга за каждый день просрочки" required></div>
+            
+            <div class="form-group"><label>Срок возврата долга:</label><input type="text" name="deadline" placeholder="до 31 декабря 2026 года" required></div>
+            
+            <button type="submit" class="btn-submit">Скачать PDF</button>
         </form>
     </div>
 </body>
