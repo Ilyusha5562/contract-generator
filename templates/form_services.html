@@ -5,7 +5,7 @@
     <title>Договор оказания услуг</title>
     <style>
         body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 650px; }
         h1 { color: #333; margin-bottom: 20px; font-size: 22px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
@@ -13,68 +13,35 @@
         .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .btn-submit:hover { background: #218838; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
-        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="/" class="back-link">← Назад к выбору договоров</a>
         <h1>Договор оказания услуг</h1>
-        
         <form action="/generate-pdf" method="post">
             <input type="hidden" name="contract_type" value="services">
+            
+            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" placeholder="Санкт-Петербург" required></div>
+            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" placeholder="22 августа 2026" required></div>
+            
+            <div class="form-group"><label>Исполнитель (ФИО / Название компании / ИП):</label><input type="text" name="party1_name" placeholder="ИП Иванов И.И." required></div>
+            <div class="form-group"><label>ИНН / Паспорт и Адрес Исполнителя:</label><input type="text" name="party1_id" placeholder="ИНН, адрес регистрации/юридический" required></div>
+            <div class="form-group"><label>Банковские реквизиты Исполнителя:</label><input type="text" name="specific_field_3" placeholder="Р/сч, БИК, Банк"></div>
 
-            <div class="form-group">
-                <label>Город заключения:</label>
-                <input type="text" name="city" required placeholder="например, Санкт-Петербург">
-            </div>
+            <div class="form-group"><label>Заказчик (ФИО / Название компании):</label><input type="text" name="party2_name" placeholder="ООО «СтройМонтаж»" required></div>
+            <div class="form-group"><label>ИНН / ОГРН и Адрес Заказчика:</label><input type="text" name="party2_id" placeholder="ИНН, юридический адрес" required></div>
+            <div class="form-group"><label>Банковские реквизиты Заказчика:</label><input type="text" name="specific_field_4" placeholder="Р/сч, БИК, Банк"></div>
 
-            <div class="form-group">
-                <label>Дата заключения:</label>
-                <input type="text" name="date" required placeholder="например, 22 августа 2026">
-            </div>
-
-            <div class="form-group">
-                <label>Исполнитель (ФИО / Компания):</label>
-                <input type="text" name="party1_name" required placeholder="Кто выполняет услуги">
-            </div>
-
-            <div class="form-group">
-                <label>ИНН / Паспорт Исполнителя:</label>
-                <input type="text" name="party1_id" placeholder="Реквизиты">
-            </div>
-
-            <div class="form-group">
-                <label>Заказчик (ФИО / Компания):</label>
-                <input type="text" name="party2_name" required placeholder="Кто заказывает услуги">
-            </div>
-
-            <div class="form-group">
-                <label>ИНН / Паспорт Заказчика:</label>
-                <input type="text" name="party2_id" placeholder="Реквизиты">
-            </div>
-
-            <div class="form-group">
-                <label>Суть и техническое задание услуг:</label>
-                <input type="text" name="specific_field_1" required placeholder="Подробное описание того, что нужно сделать">
-            </div>
-
-            <div class="form-group">
-                <label>Порядок сдачи-приемки:</label>
-                <textarea name="specific_field_2" rows="2" placeholder="Сроки подписания акта выполненных работ..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Стоимость услуг (руб.):</label>
-                <input type="text" name="price" required placeholder="30000">
-            </div>
-
-            <div class="form-group">
-                <label>Срок выполнения работ:</label>
-                <input type="text" name="deadline" required placeholder="например, до 15 сентября 2026">
-            </div>
-
-            <button type="submit" class="btn-submit">Скачать договор услуг (PDF)</button>
+            <div class="form-group"><label>Суть и техническое задание (что делается):</label><input type="text" name="specific_field_1" placeholder="Разработка сайта-визитки" required></div>
+            <div class="form-group"><label>Порядок сдачи-приемки:</label><textarea name="specific_field_2" rows="2" placeholder="Заказчик подписывает акт в течение 3 дней..."></textarea></div>
+            
+            <div class="form-group"><label>Стоимость услуг (руб.):</label><input type="text" name="price" placeholder="30000" required></div>
+            <div class="form-group"><label>Порядок оплаты (например, 50% предоплата, 50% после акта):</label><input type="text" name="specific_field_5" placeholder="50% предоплата, окончательный расчет после подписания акта" required></div>
+            
+            <div class="form-group"><label>Срок выполнения работ:</label><input type="text" name="deadline" placeholder="до 15 сентября 2026" required></div>
+            
+            <button type="submit" class="btn-submit">Скачать PDF</button>
         </form>
     </div>
 </body>
