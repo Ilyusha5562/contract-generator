@@ -23,12 +23,18 @@ def contract_form(request: Request, contract_type: str):
         "services": "Договор оказания услуг",
         "construction": "Договор строительного подряда",
         "sale": "Договор купли-продажи",
-        "rent": "Договор аренды помещения",
+        "rent": "Договор аренды",
         "loan": "Договор займа",
         "employment": "Трудовой договор",
         "supply": "Договор поставки",
         "storage": "Договор хранения",
-        "license": "Лицензионный договор"
+        "license": "Лицензионный договор",
+        "carriage": "Договор перевозки",
+        "gift": "Договор дарения",
+        "agency": "Агентский договор",
+        "commission": "Договор комиссии",
+        "author": "Договор авторского заказа",
+        "nda": "Соглашение о конфиденциальности (NDA)"
     }
     return templates.TemplateResponse(request, "form.html", {
         "request": request,
@@ -58,59 +64,33 @@ def generate_pdf(
     c.setFont(font_name, 11)
     
     y = 750
-    titles = {
-        "services": "ДОГОВОР УСЛУГ", 
-        "construction": "ДОГОВОР ПОДРЯДА", 
-        "sale": "ДОГОВОР КУПЛИ-продажи",
-        "rent": "ДОГОВОР АРЕНДЫ",
-        "loan": "ДОГОВОР ЗАЙМА",
-        "employment": "ТРУДОВОЙ ДОГОВОР",
-        "supply": "ДОГОВОР ПОСТАВКИ",
-        "storage": "ДОГОВОР ХРАНЕНИЯ",
-        "license": "ЛИЦЕНЗИОННЫЙ ДОГОВОР"
-    }
-    c.drawString(50, y, titles.get(contract_type, "ДОГОВОР"))
-    
+    # Заголовок для всех 15 типов
+    c.drawString(50, y, "ДОГОВОР")
     y -= 30
     c.drawString(50, y, f"г. {city}, {date}")
     y -= 40
     
-    # Гибкая настройка сторон в зависимости от типа
-    if contract_type == "employment":
-        c.drawString(50, y, f"Работодатель: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Работник: {customer_name}")
-    elif contract_type == "loan":
-        c.drawString(50, y, f"Займодавец: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Заемщик: {customer_name}")
-    elif contract_type == "rent":
-        c.drawString(50, y, f"Арендодатель: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Арендатор: {customer_name}")
-    elif contract_type == "supply":
-        c.drawString(50, y, f"Поставщик: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Покупатель: {customer_name}")
-    elif contract_type == "storage":
-        c.drawString(50, y, f"Хранитель: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Поклажедатель: {customer_name}")
-    elif contract_type == "license":
-        c.drawString(50, y, f"Лицензиар: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Лицензиат: {customer_name}")
-    else:
-        c.drawString(50, y, f"Сторона 1: {contractor_name}")
-        y -= 20
-        c.drawString(50, y, f"Сторона 2: {customer_name}")
-        
+    # Динамические стороны
+    roles = {
+        "carriage": ("Перевозчик", "Заказчик"),
+        "gift": ("Даритель", "Одаряемый"),
+        "agency": ("Агент", "Принципал"),
+        "commission": ("Комиссионер", "Комитент"),
+        "author": ("Заказчик", "Автор"),
+        "nda": ("Раскрывающая сторона", "Получающая сторона")
+    }
+    role1, role2 = roles.get(contract_type, ("Сторона 1", "Сторона 2"))
+    
+    c.drawString(50, y, f"{role1}: {contractor_name}")
+    y -= 20
+    c.drawString(50, y, f"{role2}: {customer_name}")
+    
     y -= 30
-    c.drawString(50, y, f"1. Предмет / Обязанности: {subject}")
+    c.drawString(50, y, f"1. Предмет: {subject}")
     y -= 20
-    c.drawString(50, y, f"2. Сумма / Вознаграждение: {price} руб.")
+    c.drawString(50, y, f"2. Цена/Вознаграждение: {price} руб.")
     y -= 20
-    c.drawString(50, y, f"3. Срок / Период действия: {deadline}")
+    c.drawString(50, y, f"3. Срок: {deadline}")
     
     c.save()
     return FileResponse(filename, media_type='application/pdf', filename=filename)
