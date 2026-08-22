@@ -47,16 +47,14 @@ def generate_pdf(
     contract_type: str = Form(...),
     city: str = Form(...),
     date: str = Form(...),
-    customer_name: str = Form(...),
-    customer_inn: str = Form(...),
-    contractor_name: str = Form(...),
-    contractor_inn: str = Form(...),
-    subject: str = Form(...),
-    deadline: str = Form("Не указано"),
-    price: str = Form(...),
-    extra_terms: str = Form(""),
-    penalty_customer: str = Form("0.1"),
-    penalty_contractor: str = Form("0.1")
+    party1_name: str = Form(...),
+    party1_id: str = Form(""),
+    party2_name: str = Form(...),
+    party2_id: str = Form(""),
+    specific_field_1: str = Form(""),
+    specific_field_2: str = Form(""),
+    price: str = Form("0"),
+    deadline: str = Form("Не указано")
 ):
     filename = "contract.pdf"
     c = canvas.Canvas(filename, pagesize=letter)
@@ -64,33 +62,23 @@ def generate_pdf(
     c.setFont(font_name, 11)
     
     y = 750
-    # Заголовок для всех 15 типов
-    c.drawString(50, y, "ДОГОВОР")
+    c.drawString(50, y, f"ДОГОВОР ({contract_type.upper()})")
     y -= 30
-    c.drawString(50, y, f"г. {city}, {date}")
+    c.drawString(50, y, f"г. {city}, от {date}")
     y -= 40
     
-    # Динамические стороны
-    roles = {
-        "carriage": ("Перевозчик", "Заказчик"),
-        "gift": ("Даритель", "Одаряемый"),
-        "agency": ("Агент", "Принципал"),
-        "commission": ("Комиссионер", "Комитент"),
-        "author": ("Заказчик", "Автор"),
-        "nda": ("Раскрывающая сторона", "Получающая сторона")
-    }
-    role1, role2 = roles.get(contract_type, ("Сторона 1", "Сторона 2"))
-    
-    c.drawString(50, y, f"{role1}: {contractor_name}")
+    c.drawString(50, y, f"Сторона 1: {party1_name} (ИНН/Паспорт: {party1_id})")
     y -= 20
-    c.drawString(50, y, f"{role2}: {customer_name}")
-    
+    c.drawString(50, y, f"Сторона 2: {party2_name} (ИНН/Паспорт: {party2_id})")
     y -= 30
-    c.drawString(50, y, f"1. Предмет: {subject}")
+    
+    c.drawString(50, y, f"1. Специфика договора: {specific_field_1}")
     y -= 20
-    c.drawString(50, y, f"2. Цена/Вознаграждение: {price} руб.")
+    c.drawString(50, y, f"2. Дополнительные условия: {specific_field_2}")
     y -= 20
-    c.drawString(50, y, f"3. Срок: {deadline}")
+    c.drawString(50, y, f"3. Сумма / Оплата: {price} руб.")
+    y -= 20
+    c.drawString(50, y, f"4. Срок выполнения: {deadline}")
     
     c.save()
     return FileResponse(filename, media_type='application/pdf', filename=filename)
