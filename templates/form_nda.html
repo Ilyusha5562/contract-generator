@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Соглашение о конфиденциальности (NDA)</title>
+    <style>
+        body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        h1 { color: #333; margin-bottom: 20px; font-size: 22px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .btn-submit { background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Назад к выбору договоров</a>
+        <h1>Соглашение о конфиденциальности (NDA)</h1>
+        <form action="/generate-pdf" method="post">
+            <input type="hidden" name="contract_type" value="nda">
+            <div class="form-group"><label>Город заключения:</label><input type="text" name="city" required></div>
+            <div class="form-group"><label>Дата заключения:</label><input type="text" name="date" required></div>
+            <div class="form-group"><label>Раскрывающая сторона (Владелец тайны):</label><input type="text" name="party1_name" required></div>
+            <div class="form-group"><label>Реквизиты Раскрывающей стороны:</label><input type="text" name="party1_id"></div>
+            <div class="form-group"><label>Получающая сторона (Кто берет обязательство молчать):</label><input type="text" name="party2_name" required></div>
+            <div class="form-group"><label>Реквизиты Получающей стороны:</label><input type="text" name="party2_id"></div>
+            <div class="form-group"><label>Перечень конфиденциальной информации:</label><input type="text" name="specific_field_1" required></div>
+            <div class="form-group"><label>Ответственность и штрафы за разглашение:</label><textarea name="specific_field_2" rows="2"></textarea></div>
+            <div class="form-group"><label>Сумма штрафа за утечку / неустойка (руб.):</label><input type="text" name="price" value="500000" required></div>
+            <div class="form-group"><label>Срок действия обязательств о неразглашении:</label><input type="text" name="deadline" required></div>
+            <button type="submit" class="btn-submit">Скачать PDF</button>
+        </form>
+    </div>
+</body>
+</html>
