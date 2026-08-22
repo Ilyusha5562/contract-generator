@@ -19,28 +19,9 @@ def home(request: Request):
 
 @app.get("/form/{contract_type}", response_class=HTMLResponse)
 def contract_form(request: Request, contract_type: str):
-    titles = {
-        "services": "Договор оказания услуг",
-        "construction": "Договор строительного подряда",
-        "sale": "Договор купли-продажи",
-        "rent": "Договор аренды",
-        "loan": "Договор займа",
-        "employment": "Трудовой договор",
-        "supply": "Договор поставки",
-        "storage": "Договор хранения",
-        "license": "Лицензионный договор",
-        "carriage": "Договор перевозки",
-        "gift": "Договор дарения",
-        "agency": "Агентский договор",
-        "commission": "Договор комиссии",
-        "author": "Договор авторского заказа",
-        "nda": "Соглашение о конфиденциальности (NDA)"
-    }
-    return templates.TemplateResponse(request, "form.html", {
-        "request": request,
-        "contract_type": contract_type,
-        "contract_title": titles.get(contract_type, "Договор")
-    })
+    # Динамически ищет шаблон конкретного договора, например form_rent.html
+    template_name = f"form_{contract_type}.html"
+    return templates.TemplateResponse(request, template_name, {"request": request, "contract_type": contract_type})
 
 @app.post("/generate-pdf")
 def generate_pdf(
