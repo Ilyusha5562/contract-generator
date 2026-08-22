@@ -23,9 +23,11 @@ def contract_form(request: Request, contract_type: str):
         "services": "Договор оказания услуг",
         "construction": "Договор строительного подряда",
         "sale": "Договор купли-продажи",
-        "rent": "Договор аренды помещения"
+        "rent": "Договор аренды помещения",
+        "loan": "Договор займа"
     }
     return templates.TemplateResponse(request, "form.html", {
+        "request": request,
         "contract_type": contract_type,
         "contract_title": titles.get(contract_type, "Договор")
     })
@@ -56,7 +58,8 @@ def generate_pdf(
         "services": "ДОГОВОР УСЛУГ", 
         "construction": "ДОГОВОР ПОДРЯДА", 
         "sale": "ДОГОВОР КУПЛИ-ПРОДАЖИ",
-        "rent": "ДОГОВОР АРЕНДЫ"
+        "rent": "ДОГОВОР АРЕНДЫ",
+        "loan": "ДОГОВОР ЗАЙМА"
     }
     c.drawString(50, y, titles.get(contract_type, "ДОГОВОР"))
     
@@ -64,7 +67,12 @@ def generate_pdf(
     c.drawString(50, y, f"г. {city}, {date}")
     y -= 40
     
-    if contract_type == "rent":
+    # Логика подписей сторон
+    if contract_type == "loan":
+        c.drawString(50, y, f"Займодавец: {contractor_name}")
+        y -= 20
+        c.drawString(50, y, f"Заемщик: {customer_name}")
+    elif contract_type == "rent":
         c.drawString(50, y, f"Арендодатель: {contractor_name}")
         y -= 20
         c.drawString(50, y, f"Арендатор: {customer_name}")
@@ -74,11 +82,11 @@ def generate_pdf(
         c.drawString(50, y, f"Сторона 2: {customer_name}")
         
     y -= 30
-    c.drawString(50, y, f"1. Объект/Предмет: {subject}")
+    c.drawString(50, y, f"1. Предмет: {subject}")
     y -= 20
-    c.drawString(50, y, f"2. Стоимость аренды/оплаты: {price} руб.")
+    c.drawString(50, y, f"2. Сумма займа/оплаты: {price} руб.")
     y -= 20
-    c.drawString(50, y, f"3. Срок аренды: {deadline}")
+    c.drawString(50, y, f"3. Срок возврата/исполнения: {deadline}")
     
     c.save()
     return FileResponse(filename, media_type='application/pdf', filename=filename)
