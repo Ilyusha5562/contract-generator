@@ -16,7 +16,7 @@ if os.path.exists('arial.ttf'):
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html", {})
 
 @app.get("/form/{contract_type}", response_class=HTMLResponse)
 def contract_form(request: Request, contract_type: str):
@@ -25,8 +25,7 @@ def contract_form(request: Request, contract_type: str):
         "construction": "Договор строительного подряда"
     }
     contract_title = titles.get(contract_type, "Договор")
-    return templates.TemplateResponse("form.html", {
-        "request": request, 
+    return templates.TemplateResponse(request, "form.html", {
         "contract_type": contract_type,
         "contract_title": contract_title
     })
