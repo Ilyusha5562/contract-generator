@@ -10,7 +10,6 @@ import os
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Безопасная регистрация шрифта
 if os.path.exists('arial.ttf'):
     pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
 
@@ -22,12 +21,12 @@ def home(request: Request):
 def contract_form(request: Request, contract_type: str):
     titles = {
         "services": "Договор оказания услуг",
-        "construction": "Договор строительного подряда"
+        "construction": "Договор строительного подряда",
+        "sale": "Договор купли-продажи"
     }
-    contract_title = titles.get(contract_type, "Договор")
     return templates.TemplateResponse(request, "form.html", {
         "contract_type": contract_type,
-        "contract_title": contract_title
+        "contract_title": titles.get(contract_type, "Договор")
     })
 
 @app.post("/generate-pdf")
@@ -40,7 +39,7 @@ def generate_pdf(
     contractor_name: str = Form(...),
     contractor_inn: str = Form(...),
     subject: str = Form(...),
-    deadline: str = Form(...),
+    deadline: str = Form("Не указано"),
     price: str = Form(...),
     extra_terms: str = Form(""),
     penalty_customer: str = Form("0.1"),
@@ -48,37 +47,28 @@ def generate_pdf(
 ):
     filename = "contract.pdf"
     c = canvas.Canvas(filename, pagesize=letter)
-    width, height = letter
-    
     font_name = 'Arial' if 'Arial' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
     c.setFont(font_name, 11)
     
-    y = height - 40
-    title = "ДОГОВОР ОКАЗАНИЯ УСЛУГ" if contract_type == "services" else "ДОГОВОР СТРОИТЕЛЬНОГО ПОДРЯДА"
+    y = 750
+    titles = {"services": "ДОГОВОР УСЛУГ", "construction": "ДОГОВОР ПОДРЯДА", "sale": "ДОГОВОР КУПЛИ-ПРОДАЖИ"}
+    c.drawString(50, y, titles.get(contract_type, "ДОГОВОР"))
     
-    c.drawString(50, y, f"{title} № 1")
-    y -= 25
-    c.drawString(50, y, f"г. {city}                                                                          Дата: {date}")
-    y -= 35
-    
-    c.drawString(50, y, f"Заказчик: {customer_name}, ИНН: {customer_inn}")
+    y -= 30
+    c.drawString(50, y, f"г. {city}, {date}")
+    y -= 40
+    c.drawString(50, y, f"Продавец/Исполнитель: {contractor_name}")
     y -= 20
-    contractor_label = "Исполнитель" if contract_type == "services" else "Подрядчик"
-    c.drawString(50, y, f"{contractor_label}: {contractor_name}, ИНН: {contractor_inn}")
+    c.drawString(50, y, f"Покупатель/Заказчик: {customer_name}")
     y -= 30
     
-    c.drawString(50, y, f"1. Предмет: {subject}")
+    # Предмет в зависимости от типа
+    label = "Предмет сделки" if contract_type == "sale" else "Предмет договора"
+    c.drawString(50, y, f"1. {label}: {subject}")
     y -= 20
-    c.drawString(50, y, f"2. Срок: {deadline}")
+    c.drawString(50, y, f"2. Цена: {price} руб.")
     y -= 20
-    c.drawString(50, y, f"3. Стоимость: {price} руб.")
-    y -= 25
-    
-    if extra_terms:
-        c.drawString(50, y, f"4. Доп. условия: {extra_terms}")
-        y -= 25
-
-    c.drawString(50, y, f"5. Ответственность: пени {penalty_customer}% / {penalty_contractor}%")
+    c.drawString(50, y, f"3. Срок: {deadline}")
     
     c.save()
     return FileResponse(filename, media_type='application/pdf', filename=filename)
