@@ -5,20 +5,20 @@
     <title>Конструктор договоров</title>
     <style>
         body { font-family: sans-serif; background: #eef2f5; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 600px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 650px; }
         h1 { text-align: center; color: #333; margin-bottom: 30px; }
-        .card { background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .card { background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .card:hover { border-color: #007bff; background: #f1f8ff; }
         .card h3 { margin: 0 0 5px 0; color: #007bff; }
         .card p { margin: 0; color: #666; font-size: 14px; }
-        .btn { background: #007bff; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; white-space: nowrap; }
         .btn:hover { background: #0056b3; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Выберите вид договора</h1>
-        
+
         <div class="card">
             <div>
                 <h3>Договор оказания услуг</h3>
@@ -34,7 +34,7 @@
             </div>
             <a href="/form/construction" class="btn">Выбрать</a>
         </div>
-        
+
         <div class="card">
             <div>
                 <h3>Договор купли-продажи</h3>
@@ -42,7 +42,7 @@
             </div>
             <a href="/form/sale" class="btn">Выбрать</a>
         </div>
-        
+
         <div class="card">
             <div>
                 <h3>Договор аренды</h3>
@@ -57,6 +57,38 @@
                 <p>Для передачи денежных средств в долг</p>
             </div>
             <a href="/form/loan" class="btn">Выбрать</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <h3>Трудовой договор</h3>
+                <p>Для оформления приема сотрудника на работу</p>
+            </div>
+            <a href="/form/employment" class="btn">Выбрать</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <h3>Договор поставки</h3>
+                <p>Для оптовой и регулярной поставки товаров</p>
+            </div>
+            <a href="/form/supply" class="btn">Выбрать</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <h3>Договор хранения</h3>
+                <p>Для передачи имущества на временное хранение</p>
+            </div>
+            <a href="/form/storage" class="btn">Выбрать</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <h3>Лицензионный договор</h3>
+                <p>Для передачи прав на ПО, тексты и контент</p>
+            </div>
+            <a href="/form/license" class="btn">Выбрать</a>
         </div>
     </div>
 </body>
