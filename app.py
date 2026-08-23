@@ -86,6 +86,29 @@ def generate_pdf(
     story.append(Paragraph(f"<b>2. Дополнительные условия:</b> {specific_field_2}", body_style))
     story.append(Paragraph(f"<b>3. Сумма / Оплата:</b> {price} руб.", body_style))
     story.append(Paragraph(f"<b>4. Срок выполнения:</b> {deadline}", body_style))
+
+    from reportlab.platypus import Table, TableStyle
+    from reportlab.lib import colors
+
+    # Добавляем небольшой отступ перед подписями
+    story.append(Spacer(1, 40))
+    
+    # Данные для таблицы подписей
+    signature_data = [
+        [Paragraph("<b>Продавец:</b>", body_style), Paragraph("<b>Покупатель:</b>", body_style)],
+        [Paragraph(f"{party1_name}", body_style), Paragraph(f"{party2_name}", body_style)],
+        [Paragraph("<br/><br/>___________________ / ___________________", body_style), 
+         Paragraph("<br/><br/>___________________ / ___________________", body_style)]
+    ]
+    
+    # Создаем табличку шириной 500 пунктов (под ширину полей страницы)
+    sig_table = Table(signature_data, colWidths=[250, 250])
+    sig_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+    ]))
+    
+    story.append(sig_table)
     
     # Компилируем PDF
     doc.build(story)
