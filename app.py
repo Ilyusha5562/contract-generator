@@ -74,7 +74,20 @@ def generate_pdf(
     story = []
     
     # Добавляем элементы в документ
-    story.append(Paragraph(f"<b>ДОГОВОР ({contract_type.upper()})</b>", title_style))
+    # Словарь для красивых русских названий договоров
+contract_names = {
+    "sale": "КУПЛИ-ПРОДАЖИ",
+    "services": "ОКАЗАНИЯ УСЛУГ",
+    "rent": "АРЕНДЫ",
+    "loan": "ЗАЙМА",
+    "construction": "СТРОИТЕЛЬНОГО ПОДРЯДА"
+    # Можете добавить остальные типы по аналогии
+}
+
+# Получаем русское название или подставляем тип по умолчанию, если его нет в словаре
+title_text = contract_names.get(contract_type.lower(), contract_type.upper())
+
+story.append(Paragraph(f"<b>ДОГОВОР ({title_text})</b>", title_style))
     story.append(Paragraph(f"г. {city}, от {date}", body_style))
     story.append(Spacer(1, 10))
     
