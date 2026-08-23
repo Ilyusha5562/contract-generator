@@ -2,7 +2,9 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 import os
@@ -19,7 +21,6 @@ def home(request: Request):
 
 @app.get("/form/{contract_type}", response_class=HTMLResponse)
 def contract_form(request: Request, contract_type: str):
-    # Динамически ищет шаблон конкретного договора, например form_rent.html
     template_name = f"form_{contract_type}.html"
     return templates.TemplateResponse(request, template_name, {"request": request, "contract_type": contract_type})
 
@@ -38,28 +39,61 @@ def generate_pdf(
     deadline: str = Form("Не указано")
 ):
     filename = "contract.pdf"
-    c = canvas.Canvas(filename, pagesize=letter)
+    
+    # Настраиваем документ с отступами (в пунктах)
+    doc = SimpleDocTemplate(
+        filename,
+        pagesize=letter,
+        rightMargin=50,
+        leftMargin=50,
+        topMargin=50,
+        bottomMargin=50
+    )
+    
     font_name = 'Arial' if 'Arial' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'
-    c.setFont(font_name, 11)
     
-    y = 750
-    c.drawString(50, y, f"ДОГОВОР ({contract_type.upper()})")
-    y -= 30
-    c.drawString(50, y, f"г. {city}, от {date}")
-    y -= 40
+    # Стили текста с поддержкой переносов и правильным шрифтом
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Normal'],
+        fontName=font_name,
+        fontSize=14,
+        leading=18,
+        spaceAfter=15
+    )
+    body_style = ParagraphStyle(
+        'BodyStyle',
+        parent=styles['Normal'],
+        fontName=font_name,
+        fontSize=11,
+        leading=16,
+        spaceAfter=10
+    )
     
-    c.drawString(50, y, f"Сторона 1: {party1_name} (ИНН/Паспорт: {party1_id})")
-    y -= 20
-    c.drawString(50, y, f"Сторона 2: {party2_name} (ИНН/Паспорт: {party2_id})")
-    y -= 30
+    story = []
     
-    c.drawString(50, y, f"1. Специфика договора: {specific_field_1}")
-    y -= 20
-    c.drawString(50, y, f"2. Дополнительные условия: {specific_field_2}")
-    y -= 20
-    c.drawString(50, y, f"3. Сумма / Оплата: {price} руб.")
-    y -= 20
-    c.drawString(50, y, f"4. Срок выполнения: {deadline}")
+    # Добавляем элементы в документ
+    story.append(Paragraph(f"<b>ДОГОВОР ({contract_type.upper()})</b>", title_style))
+    story.append(Paragraph(f"г. {city}, от {date}", body_style))
+    story.append(Spacer(1, 10))
     
-    c.save()
-    return FileResponse(filename, media_type='application/pdf', filename=filename)
+    story.append(Paragraph(f"<b>Сторона 1:</b> {party1_name} (ИНН/Паспорт: {party1_id})", body_style))
+    story.append(Paragraph(f"<b>Сторона 2:</b> {party2_name} (ИНН/Паспорт: {party2_id})", body_style))
+    story.append(Spacer(1, 10))
+    
+    story.append(Paragraph(f"<b>1. Специфика договора:</b> {specific_field_1}", body_style))
+    story.append(Paragraph(f"<b>2. Дополнительные условия:</b> {specific_field_2}", body_style))
+    story.append(Paragraph(f"<b>3. Сумма / Оплата:</b> {price} руб.", body_style))
+    story.append(Paragraph(f"<b>4. Срок выполнения:</b> {deadline}", body_style))
+    
+    # Компилируем PDF
+    doc.build(story)
+    
+    # Отправляем файл для предпросмотра в браузере (disposition='inline')
+    return FileResponse(
+        filename, 
+        media_type='application/pdf', 
+        filename=filename, 
+        content_disposition_type='inline'
+    )
